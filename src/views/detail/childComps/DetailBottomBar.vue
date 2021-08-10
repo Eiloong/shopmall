@@ -15,13 +15,12 @@
         @click="starClick"
       />
       <van-goods-action-button @click="addToCart" text="加入购物车" type="warning" />
-      <van-goods-action-button @click="$router.push('/cart')" text="立即购买" type="danger" />
+      <van-goods-action-button @click="$router.push('/shopcart')" text="立即购买" type="danger" />
     </van-goods-action>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 
 export default {
   name: "DetailBottomBar",
@@ -29,19 +28,6 @@ export default {
     return {
       isShouCang: false
     };
-  },
-  computed: {
-    // 对象写法可以自己命名
-    ...mapGetters({
-      cartLength: "cartListLength"
-    })
-  },
-  created() {
-    // 每次刷新页面获取本地存储购物车数据
-    let list = JSON.parse(localStorage.getItem("cartList")) || [];
-    if (list) {
-      this.$store.commit("setCartList", list);
-    }
   },
   methods: {
     addToCart() {

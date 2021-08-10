@@ -1,23 +1,18 @@
 # shopmall
 
-## Project setup
+# 真实项目接口请联系微信coderwhy001
+
+## 项目安装
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 项目运行
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 项目打包
 ```
 npm run build
 ```
-
-### Customize configuration
-- 首页：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200812213505595.png#pic_center)
-
-- 详情：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020081221363060.png#pic_center)
