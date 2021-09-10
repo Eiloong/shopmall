@@ -1,6 +1,6 @@
 @import "./normalize.css";
 
-/*:root -> 获取根元素html*/
+/*:root -> 获取根元素html,定义变量*/
 :root {
   --color-text: #666;
   --color-high-text: #ff5777;
@@ -54,4 +54,6 @@ a {
 .right {
   float: right;
 }
-
+table {
+  border-collapse: collapse;
+}

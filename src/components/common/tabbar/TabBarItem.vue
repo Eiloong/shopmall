@@ -1,58 +1,52 @@
 <template>
-  <div class="tab-bar-item" @click='itemClick'>
-    <div v-if="!isActive"><slot name="item-icon"></slot></div>
-    <div v-else><slot name="item-icon-active"></slot></div>
-    <div :style="activeStyle"><slot name="item-text"></slot></div>
+  <div class="tab-bar-item" @click="handleTabBarBtn">
+    <div class="img" v-if="!isActive">
+      <slot name="img" />
+    </div>
+    <div class="img-active" v-else>
+      <slot name="img-active" />
+    </div>
+    <div :class="{ active: isActive }"><slot name="text" /></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "TabBarItem",
-  props: {
-    path: String,
-    activeColor: {
-      type: String,
-      default: 'red'
-    }
-  },
   data() {
-    return {
-      // isActive: true
-    }
+    return {};
   },
   computed: {
     isActive() {
-      return !this.$route.path.indexOf(this.path)
+      return this.$route.path.includes(this.path);
     },
-    activeStyle() {
-      return this.isActive ? {color: this.activeColor} : {}
-    }
+  },
+  props: {
+    path: {
+      type: String,
+      default: "/home",
+    },
   },
   methods: {
-    itemClick() {
-      this.$router.replace(this.path)
-    }
-  }
+    handleTabBarBtn() {
+      this.$router.push(this.path);
+    },
+  },
 };
 </script>
 
-<style>
-  .tab-bar-item {
-    flex: 1;
-    text-align: center;
-    height: 49px;
-    /* line-height: 49px; */
-    font-size: 12px;
-  }
-  .tab-bar-item img {
+<style lang="less" scoped>
+.tab-bar-item {
+  flex: 1;
+  margin-top: 5px;
+  .img img,
+  .img-active img {
     width: 24px;
     height: 24px;
-    margin-top: 3px;
     margin-bottom: 2px;
     vertical-align: middle;
   }
-  /* .active {
-    color: red;
-  } */
+}
+.active {
+  color: rgb(255, 87, 119);
+}
 </style>

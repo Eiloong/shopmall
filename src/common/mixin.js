@@ -1,19 +1,17 @@
-import {debounce} from './utils'
+import BackTop from "components/content/backTop/BackTop";
 
-export const itemListenerMixin = {
+export const backTopMixin = {
   data() {
     return {
-      itemImgListener: null,
-      refresh: null
+      isShow: false,
     }
   },
-  mounted() {
-    this.refresh = debounce(this.$refs.scroll.refresh, 200)
-
-    // 对监听事件进行保存
-    this.itemImgListener = () => refresh()
-
-    // 监听item中图片加载完成
-    this.$bus.$on('itemInageLoad', this.itemImgListener)
+  components: {
+    BackTop
+  },
+  methods: {
+    handleBackTop() {
+      this.$refs.scroll.scrollTo()
+    },
   },
 }

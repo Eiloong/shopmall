@@ -1,18 +1,5 @@
 # shopmall
 
-# 真实项目接口请联系微信coderwhy001
-
-## 项目安装
+## url
 ```
-npm install
-```
-
-### 项目运行
-```
-npm run serve
-```
-
-### 项目打包
-```
-npm run build
-```
+获取正确的url,请添加coderwhy老师微信

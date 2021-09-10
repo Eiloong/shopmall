@@ -1,103 +1,97 @@
 <template>
-  <div v-if="Object.keys(goodsInfo).length !== 0" class="base-info">
-    <div class="info-title">{{goodsInfo.title}}</div>
-    <div class="info-price">
-      <span class="n-price">{{goodsInfo.newPrice}}</span>
-      <span class="0-price">{{goodsInfo.oldPrice}}</span>
-      <span v-if="goodsInfo.discount" class="discount">{{goodsInfo.discount}}</span>
+  <div class="detail-goods-info" v-if="Object.keys(goods).length !== 0">
+    <p class="title">
+      {{ goods.title }}
+    </p>
+    <div class="price">
+      <span class="new-price">{{ goods.price }}</span>
+      <span class="old-price">{{ goods.oldPrice }}</span>
+      <span
+        :style="{ backgroundColor: goods.discountBgColor }"
+        class="discount-desc"
+        >{{ goods.discountDesc }}</span
+      >
     </div>
-    <div class="info-other">
-      <span>{{goodsInfo.columns[0]}}</span>
-      <span>{{goodsInfo.columns[1]}}</span>
-      <span>{{goodsInfo.services[goodsInfo.services.length-1].name}}</span>
-    </div>
-    <div class="info-service">
-      <span class="info-service-item" v-for="index in goodsInfo.services.length-1" :key="index">
-        <img :src="goodsInfo.services[index-1].icon" alt="">
-        <span>{{goodsInfo.services[index-1].name}}</span>
+    <div class="columns" v-if="goods.columns">
+      <span v-for="index in goods.columns.length - 1">
+        {{ goods.columns[index] }}
       </span>
+      <span>{{ goods.services[0].name }}</span>
+    </div>
+    <div class="services" v-if="goods.services">
+      <div v-for="index in goods.services.length - 2">
+        <img :src="goods.services[index + 1].icon" alt="" />
+        <span>{{ goods.services[index + 1].name }}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'DetailBaseInfo',
   props: {
-    goodsInfo: {
+    goods: {
       type: Object,
       default() {
-        return {}
+        return {};
+      },
+    },
+  },
+};
+</script>
+<style lang="less" scoped>
+.detail-goods-info {
+  padding: 20px 0 10px 0;
+  border-bottom: 5px solid #eaeaea;
+  font-size: 13px;
+  .title,
+  .price,
+  .columns,
+  .services {
+    padding: 0 10px;
+  }
+  .title {
+    font-size: 16px;
+    color: #222222;
+  }
+  .price {
+    margin: 15px 0;
+    .new-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--color-high-text);
+    }
+    .old-price {
+      margin: 0 8px;
+      text-decoration: line-through;
+    }
+    .discount-desc {
+      position: relative;
+      top: -5px;
+      padding: 3px;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #ffffff;
+    }
+  }
+  .columns,
+  .services {
+    display: flex;
+    justify-content: space-between;
+  }
+  .columns {
+    padding: 10px;
+    border-bottom: 2px solid #eaeaea;
+  }
+  .services {
+    padding: 15px 10px;
+    color: #222222;
+    div {
+      img {
+        width: 15px;
+        vertical-align: middle;
       }
     }
   }
 }
-</script>
-
-<style scoped>
-  .base-info {
-    margin-top: 15px;
-    padding: 0 8px;
-    color: #999;
-    border-bottom: 5px solid #f2f5f8;
-  }
-
-  .info-title {
-    color: #222
-  }
-
-  .info-price {
-    margin-top: 10px;
-  }
-
-  .info-price .n-price {
-    font-size: 24px;
-    color: var(--color-high-text);
-  }
-
-  .info-price .o-price {
-    font-size: 13px;
-    margin-left: 5px;
-    text-decoration: line-through;
-  }
-
-  .info-price .discount {
-    font-size: 12px;
-    padding: 2px 5px;
-    color: #fff;
-    background-color: var(--color-high-text);
-    border-radius: 8px;
-    margin-left: 5px;
-
-    /* 让元素上浮一些: 使用相对定位即可 */
-    position: relative;
-    top: -8px;
-  }
-
-  .info-other {
-    margin-top: 15px;
-    line-height: 30px;
-    display: flex;
-    font-size: 13px;
-    border-bottom: 1px solid rgba(100,100,100,.1);
-    justify-content: space-between;
-  }
-
-  .info-service {
-    display: flex;
-    justify-content: space-between;
-    line-height: 60px;
-  }
-
-  .info-service-item img {
-    width: 14px;
-    height: 14px;
-    position: relative;
-    top: 2px;
-  }
-
-  .info-service-item span {
-    font-size: 13px;
-    color: #333;
-  }
 </style>

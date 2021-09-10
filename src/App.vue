@@ -3,20 +3,21 @@
     <keep-alive exclude="Detail">
       <router-view />
     </keep-alive>
-    <MainTabBar />
+    <main-tab-bar />
   </div>
 </template>
 
 <script>
-import MainTabBar from './components/content/mainTabbar/MainTabBar'
+import MainTabBar from "components/content/mainTabBar/MainTabBar";
+
 export default {
-  name: 'app',
+  name: "App",
   components: {
-    MainTabBar
-  }
-}
+    MainTabBar,
+  },
+};
 </script>
 
-<style>
-@import 'assets/css/base.css';
+<style scoped>
+@import url("~assets/css/base.css");
 </style>

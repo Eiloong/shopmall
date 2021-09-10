@@ -1,59 +1,75 @@
 <template>
-  <div>
-    <nav-bar>
-      <div slot="left" class="back" @click="backClick">
-        <img src="~assets/img/common/back.svg" alt="">
+  <nav-bar class="detail-nav-bar">
+    <div slot="left" class="left" @click="handleReturnHome"></div>
+    <div slot="center" class="cneter">
+      <div 
+        v-for="(item, index) in titles" 
+        :key="index" 
+        @click="handleCenterBtn(index)"
+        :class="{active: currentIndex === index}"
+        >
+        {{ item }}
       </div>
-      <div slot="center" class="titles">
-        <div v-for="(item, index) in titles"
-             :key="index" 
-             class="title-item"
-             :class="{active: index === currentIndex}"
-             @click="titleClick(index)">
-          {{ item }}
-        </div>
-      </div>
-    </nav-bar>
-  </div>
+    </div>
+  </nav-bar>
 </template>
 
 <script>
-import NavBar from "components/common/navbar/NavBar.vue";
-
+import NavBar from "components/common/navbar/NavBar";
 export default {
-  name: "DetailNavBar",
+  data() {
+    return {
+      currentIndex: 0
+    }
+  },
+  props: {
+    titles: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+  },
   components: {
     NavBar,
   },
-  data() {
-    return {
-      titles: ["商品", "参数", "评论", "推荐"],
-      currentIndex: 0,
-    };
-  },
   methods: {
-    titleClick(index) {
-      this.currentIndex = index
+    handleReturnHome() {
+      this.$router.go(-1)
     },
-    backClick() {
-      this.$router.back()
+    handleCenterBtn(index) {
+      this.currentIndex = index
+      this.$emit('handleCenterBtn', index)
     }
-  },
+  }
 };
 </script>
-
-<style scoped>
-.titles {
-  display: flex;
-}
-.title-item {
-  flex: 1;
-  font-size: 12px;
-}
-.active{
-  color: var(--color-high-text);
-}
-.back img{
-  margin-top: 12px;
+<style lang="less" scoped>
+.detail-nav-bar {
+  position: relative;
+  text-align: center;
+  background-color: #fff;
+  font-size: 13px;
+  z-index: 1;
+  .left {
+    position: relative;
+    top: 0;
+    left: 25px;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid #666;
+    border-left: 2px solid #666;
+    transform:rotate(-45deg)
+  }
+  .cneter {
+    display: flex;
+    padding: 0 10px;
+    div {
+      flex: 1;
+    }
+  }
+  .active {
+    color: var(--color-high-text);
+  }
 }
 </style>

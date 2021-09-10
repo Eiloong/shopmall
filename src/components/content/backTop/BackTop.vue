@@ -1,23 +1,31 @@
 <template>
-  <div class='back-top'>
+  <div class="back-top" @click="handleBackTop" v-show="isShow">
     <img src="~assets/img/common/top.png" alt="">
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'BackTop',
+export default {
+  props: {
+    isShow: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    handleBackTop() {
+      this.$emit('handleBackTop')
+    }
   }
+};
 </script>
-
-<style scoped>
-  .back-top{
-    position: fixed;
-    right: 4px;
-    bottom: 45px;
+<style lang="less" scoped>
+.back-top {
+  position: fixed;
+  bottom: 50px;
+  right: 15px;
+  img {
+    width: 50px;
   }
-  .back-top img{
-    width: 43px;
-    height: 43px;
-  }
+}
 </style>

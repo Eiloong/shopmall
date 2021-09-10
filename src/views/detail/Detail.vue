@@ -1,134 +1,178 @@
 <template>
-  <div id='detail'>
-    <DetailNavBar class="detail-nav" />
-    <scroll class="content" :pull-up-load="true" :probe-type="3" ref="scroll">
-      <DetailSwiper :topImages="topImages" />
-      <DetailBaseInfo :goodsInfo="goodsInfo" />
-      <DetailShopInfo :shopInfo="shopInfo" />
-      <!-- <DetailGoodsInfo :detailInfo="detailInfo" @imgLoad="imgLoad" /> -->
-      <DetailParamInfo :paramInfo="paramInfo" />
-      <DetailCommentInfo :commentInfo="commentInfo" />
-      <GoodsList :goods='recommend' />
+  <div id="detail">
+    <detail-nav-bar
+      :titles="titles"
+      ref="navbar"
+      @handleCenterBtn="handleCenterBtn"
+    />
+    <scroll class="content" ref="scroll" @scrollEvent="scrollEvent">
+      <detail-swiper
+        :swiper-images="swiperImages"
+        @handleDetailSwiper="handleDetailSwiper"
+      />
+      <detail-base-info :goods="goods" />
+      <detail-shop-info :shop-info="shopInfo" />
+      <detail-goods-info
+        :goods-info="goodsInfo"
+        @handleGoodsImg="handleGoodsImg"
+      />
+      <detail-params-info :params-info="paramsInfo" ref="params" />
+      <detail-comment-info :comment-info="commentInfo" ref="comment" />
+      <detail-recommend-info :recommend-info="recommendInfo" ref="recommend" />
     </scroll>
-    <DetailBottomBar @addToCart="addToCart" />
+    <back-top :is-show="isShow" @handleBackTop="handleBackTop" />
+    <detail-bottom-bar @handleAddCart="handleAddCart" />
+    <toast />
   </div>
 </template>
 
 <script>
-import DetailNavBar from "./childComps/DetailNavBar"
-import DetailSwiper from './childComps/DetailSwiper'
-import DetailBaseInfo from './childComps/DetailBaseInfo'
-import DetailShopInfo from './childComps/DetailShopInfo'
-import DetailGoodsInfo from './childComps/DetailGoodsInfo'
-import DetailParamInfo from './childComps/DetailParamInfo'
-import DetailCommentInfo from './childComps/DetailCommentInfo'
-import DetailBottomBar from './childComps/DetailBottomBar.vue'
+import DetailNavBar from "./childComps/DetailNavBar";
+import DetailSwiper from "./childComps/DetailSwiper";
+import DetailBaseInfo from "./childComps/DetailBaseInfo";
+import DetailShopInfo from "./childComps/DetailShopInfo";
+import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
+import DetailParamsInfo from "./childComps/DetailParamsInfo";
+import DetailCommentInfo from "./childComps/DetailCommentInfo";
+import DetailRecommendInfo from "./childComps/DetailRecommendInfo";
+import DetailBottomBar from "./childComps/DeatilBottomBar";
 
-import Scroll from '@/components/common/scroll/Scroll.vue'
-import GoodsList from '@/components/content/goods/GoodsList'
+import Scroll from "components/common/betterScroll/Scroll";
+import Toast from "components/common/toast/Toast";
 
-import { getDetail, Goods, Shop, GoodsParam, getRecommend } from "network/detail";
-import {itemListenerMixin} from '@/common/mixin'
+import { backTopMixin } from "common/mixin";
+import {
+  getDetail,
+  GoodsInfo,
+  ShopInfo,
+  ParamsInfo,
+  getRecommend,
+} from "network/detail";
 
-  export default {
-    name: 'Detail',
-    components: {
-      DetailNavBar,
-      DetailSwiper,
-      DetailBaseInfo,
-      DetailShopInfo,
-      DetailGoodsInfo,
-      DetailParamInfo,
-      DetailCommentInfo,
-      DetailBottomBar,
-      Scroll,
-      GoodsList
+import { debounce } from "common/utils";
+export default {
+  name: "Detail",
+  data() {
+    return {
+      titles: ["商品", "参数", "评论", "推荐"],
+      swiperImages: [],
+      goods: {},
+      shopInfo: {},
+      goodsInfo: {},
+      paramsInfo: {},
+      commentInfo: {},
+      recommendInfo: [],
+      scrollPosition: [],
+      scrollPositionI: -1,
+    };
+  },
+  components: {
+    DetailNavBar,
+    DetailSwiper,
+    DetailBaseInfo,
+    DetailShopInfo,
+    DetailGoodsInfo,
+    DetailParamsInfo,
+    DetailCommentInfo,
+    DetailRecommendInfo,
+    DetailBottomBar,
+    Scroll,
+    Toast,
+  },
+  created() {
+    this.getRecommend();
+  },
+  mixins: [backTopMixin],
+  mounted() {
+    let refresh = debounce(this.$refs.scroll.refresh);
+    this.$bus.$on("handleGoodsListImg", () => {
+      refresh();
+    });
+    this.getDetail(this.$route.params.iid);
+  },
+  methods: {
+    getDetail(iid) {
+      getDetail(iid).then((res) => {
+        console.log(res);
+        let result = res.result;
+        // console.log(result);
+        this.swiperImages = result.itemInfo.topImages;
+        this.goods = new GoodsInfo(
+          result.itemInfo,
+          result.columns,
+          result.shopInfo
+        );
+        this.shopInfo = new ShopInfo(result.shopInfo);
+        this.goodsInfo = result.detailInfo;
+        this.paramsInfo = new ParamsInfo(
+          result.itemParams.info,
+          result.itemParams.rule
+        );
+        this.commentInfo = result.rate.list[0];
+        // console.log(this.commentInfo);
+      });
     },
-    mixins: [itemListenerMixin],
-    data () {
-      return {
-        iid: null,
-        topImages: [],
-        goodsInfo: {},
-        shopInfo: {},
-        detailInfo: {},
-        paramInfo: {},
-        commentInfo: {},
-        recommend: []
-      };
+    getRecommend() {
+      getRecommend().then((res) => {
+        this.recommendInfo = res.data.list;
+      });
     },
-    created() {
-      // 保存传入的iid
-      this.iid = this.$route.params.iid
-      // 根据iid请求详情数据
-      getDetail(this.iid).then(res => {
-        const data = res.result
-        // 1.获取顶部的图片轮播数据
-        this.topImages = data.itemInfo.topImages
 
-        // 2.获取商品信息
-        this.goodsInfo = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
-
-        // 3. 创建店铺信息的对象
-        this.shopInfo = new Shop(data.shopInfo)
-
-        // 4.保存商品的详情数据
-        this.detailInfo = data.detailInfo
-
-        // 5.取出参数信息
-        this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
-
-        // 6.取出商品评论信息
-        if(data.rate.cRate !== 0) {
-          this.commentInfo = data.rate.list[0]
+    handleDetailSwiper() {
+      this.$refs.scroll.refresh();
+    },
+    handleGoodsImg() {
+      this.$refs.scroll.refresh();
+      this.scrollPosition[0] = 0;
+      this.scrollPosition[1] = this.$refs.params.$el.offsetTop;
+      this.scrollPosition[2] = this.$refs.comment.$el.offsetTop;
+      this.scrollPosition[3] = this.$refs.recommend.$el.offsetTop;
+      this.scrollPosition[4] = Number.MAX_VALUE;
+    },
+    scrollEvent(position) {
+      this.isShow = position.y < -1000 ? true : false;
+      for (let i = 0; i < this.scrollPosition.length - 1; i++) {
+        if (
+          this.scrollPositionI != i &&
+          -position.y >= this.scrollPosition[i] &&
+          -position.y <= this.scrollPosition[i + 1]
+        ) {
+          this.scrollPositionI = i;
+          this.$refs.navbar.currentIndex = i;
         }
-      })
-
-      // 请求推荐数据
-      getRecommend().then(res => {
-        // console.log(res);
-        this.recommend = res.data.list
-      })
-    },
-    methods: {
-      imgLoad() {
-        this.refresh()
-      },
-      // 添加购物车
-      addToCart() {
-        
       }
     },
-    mounted() {
+    handleCenterBtn(index) {
+      this.$refs.scroll.scrollTo(0, -this.scrollPosition[index]);
     },
-    destroyed() {
-      this.$bus.$off('itemInageLoad', this.itemImgListener)
+    handleAddCart() {
+      let commodityData = {};
+      commodityData.iid = this.$route.params.iid;
+      commodityData.title = this.goods.title;
+      commodityData.img = this.swiperImages[0];
+      commodityData.desc = this.goodsInfo.desc;
+      commodityData.price = this.goods.oldPrice;
+      this.$store.dispatch("increaseProductTransition", commodityData).then(res =>{
+        this.$toast.controlToast(res)
+      })
     },
-  }
+  },
+};
 </script>
 
-<style scoped>
-  #detail{
-    position: relative;
-    z-index: 9;
-    background-color: #fff;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .detail-nav{
-    position: relative;
-    z-index: 9;
-    background-color: #fff;
-  }
-
-  .content{
+<style lang="less" scoped>
+#detail {
+  position: relative;
+  height: 100vh;
+  background-color: #fff;
+  overflow: hidden;
+  z-index: 1;
+  .content {
     position: absolute;
     top: 44px;
-    left: 0;
     right: 0;
-    bottom: 50px;
-    overflow: hidden;
-    /* height: calc(100vh - 44px) */
+    left: 0;
+    bottom: 58px;
   }
+}
 </style>

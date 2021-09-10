@@ -1,4 +1,4 @@
-module.exports = {
+module.exports =  {
   configureWebpack: {
     resolve: {
       alias: {
@@ -6,7 +6,9 @@ module.exports = {
         'common': '@/common',
         'components': '@/components',
         'network': '@/network',
-        'views': '@/views',
+        'router': '@/router',
+        'stroe': '@/store',
+        'views': '@/views'
       }
     }
   }

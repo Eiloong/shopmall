@@ -1,165 +1,101 @@
 <template>
-  <div v-if="Object.keys(detailInfo).length !== 0" class="goods-info">
-    <div class="info-desc clear-fix">
-      <div class="start"></div>
-      <div class="desc">{{detailInfo.desc}}</div>
-      <div class="end"></div>
+  <div class="detail-goods-info" v-if="Object.keys(goodsInfo).length !== 0">
+    <div class="introduce">
+      <div class="point-above"></div>
+      <div class="desc">
+        {{ goodsInfo.desc }}
+      </div>
+      <div class="point-below"></div>
     </div>
-    <div class="info-key">{{detailInfo.detailImage[0].key}}</div>
-    <div class="info-list">
-      <img v-for="(item, index) in detailInfo.detailImage[0].list" 
-           :key="index" :src="item" @load="imgLoad" alt="">
-    </div>
-  </div>
-
-  <!-- <div class="dressInfo" v-if="detailInfo">
-    <div class="desc">
-      <div class="desc_before"></div>
-      {{detailInfo.desc}}
-      <div class="desc_after"></div>
-    </div>
-    <div v-for="item in detailInfo.detailImage">
-      <p>{{item.key}}</p>
-      <div v-for="item1 in item.list" class="desc_img" >
-        <img :src="item1" alt="" @load="imgLoad">
+    <div class="wearing-effect" v-if="goodsInfo.detailImage">
+      <div class="text">
+        {{ goodsInfo.detailImage[0].key }}
+      </div>
+      <div
+        class="img"
+        v-for="(item, index) in goodsInfo.detailImage[0].list"
+        :key="index"
+      >
+        <img :src="item" alt="" @load="handleGoodsImg" />
       </div>
     </div>
-  </div> -->
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'DetailGoodsInfo',
-  props: {
-    detailInfo: {
-      type: Object,
-      default() {
-        return {}
-      }
-    }
-  },
   data() {
     return {
-      counter: 0,
-      ImagesLength: 0
-    }
+      goodsImgLength: 0,
+      listLength: 0
+    };
+  },
+  props: {
+    goodsInfo: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
+  mounted() {
+    
   },
   methods: {
-    imgLoad() {
-      if (++this.counter === this.ImagesLength) {
-        this.$emit('imageLoad')
+    handleGoodsImg() {
+      this.goodsImgLength++;
+      if (this.goodsImgLength === this.goodsInfo.detailImage[0].list.length) {
+        this.$emit("handleGoodsImg");
+      }
+    },
+  },
+};
+</script>
+<style lang="less" scoped>
+.detail-goods-info {
+  border-bottom: 5px solid #eaeaea;
+  .introduce {
+    padding: 20px 10px;
+    .point-above,
+    .point-below {
+      position: relative;
+      width: 6px;
+      height: 6px;
+      background-color: #222222;
+    }
+    .point-above::after,
+    .point-below::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      width: 100px;
+      height: 2px;
+      background-color: #c3c4c4;
+      transform: translateY(-100%);
+    }
+    .point-above {
+      &::after {
+        left: 100%;
       }
     }
-  },
-  watch: {
-    detailInfo() {
-      this.ImagesLength = this.detailInfo.detailImage[0].list.length
+    .point-below {
+      float: right;
+      &::after {
+        right: 100%;
+      }
+    }
+    .desc {
+      margin: 20px 0;
+    }
+  }
+  .wearing-effect {
+    .text {
+      padding: 10px;
+      color: #333333;
+    }
+    .img img {
+      width: 100%;
     }
   }
 }
-</script>
-
-<style scoped>
-  .goods-info {
-    padding: 20px 0;
-    border-bottom: 5px solid #f2f5f8;
-  }
-
-  .info-desc {
-    padding: 0 15px;
-  }
-
-  .info-desc .start, .info-desc .end {
-    width: 90px;
-    height: 1px;
-    background-color: #a3a3a5;
-    position: relative;
-  }
-
-  .info-desc .start {
-    float: left;
-  }
-
-  .info-desc .end {
-    float: right;
-  }
-
-  .info-desc .start::before, .info-desc .end::after {
-    content: '';
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background-color: #333;
-    bottom: 0;
-  }
-
-  .info-desc .end::after {
-    right: 0;
-  }
-
-  .info-desc .desc {
-    padding: 15px 0;
-    font-size: 14px;
-  }
-
-  .info-key {
-    margin: 10px 0 10px 15px;
-    color: #333;
-    font-size: 15px;
-  }
-
-  .info-list img {
-    width: 100%;
-  }
-  /* .dressInfo{
-    padding: 10px;
-    .desc{
-      color: #666666;
-      font-size: 14px;
-      position: relative;
-      .desc_before{
-        width: 90px;
-        height: 1px;
-        position: relative;
-        background-color: #666666;
-        margin-bottom:15px;
-        margin-top: 10px;
-        &::before{
-          content: '';
-          display: inline-block;
-          position: absolute;
-          bottom: 0;
-          width: 5px;
-          height: 5px;
-          background-color: black;
-        }
-      }
-      .desc_after{
-        position: relative;
-        left: 75%;
-        width: 90px;
-        height: 1px;
-        background-color: #666666;
-        margin-bottom:15px;
-        margin-top: 10px;
-        &::after{
-          content: '';
-          display: inline-block;
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          width: 5px;
-          height: 5px;
-          background-color: black;
-        }
-      }
-
-    }
-    .desc_img{
-      padding-top: 10px;
-      img {
-        width: 100%;
-      }
-    }
-  } */
 </style>

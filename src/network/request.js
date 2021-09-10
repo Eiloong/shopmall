@@ -1,16 +1,36 @@
 import axios from 'axios'
 
-export function request(config) {
-  const instance = axios.create({
-    baseURL: '',
-    timeout: 5000
+export function request123(option) {
+  const requestExample = axios.create({
+    baseURL: ''
   })
-
-  instance.interceptors.response.use(res => {
+  requestExample.interceptors.request.use((config) => {
+    return config
+  }, (error) => {
+    console.log(error);
+  })
+  requestExample.interceptors.response.use((res) => {
     return res.data
-  }, err => {
-    console.log(err);
+  }, (error) => {
+    console.log(error);
   })
+  return requestExample(option)
+}
 
-  return instance(config)
+
+export function request152(option) {
+  const requestExample = axios.create({
+    baseURL: ''
+  })
+  requestExample.interceptors.request.use((config) => {
+    return config
+  }, (error) => {
+    console.log(error);
+  })
+  requestExample.interceptors.response.use((res) => {
+    return res.data
+  }, (error) => {
+    console.log(error);
+  })
+  return requestExample(option)
 }
